@@ -1,0 +1,5 @@
+---
+application: "static-deploy"
+deploy_to: "/srv/www/{{ application }}"
+repository: "dist/"
+keep_releases: 5

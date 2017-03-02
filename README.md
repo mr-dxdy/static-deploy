@@ -1,0 +1,2 @@
+Ansible static site deploy
+=============================

@@ -1,0 +1,27 @@
+---
+- name: "Add deploy variables"
+  include_vars: default.yml
+
+- name: 'Build timestamp'
+  shell: date +%Y%m%d%s
+  register: timestamp
+
+- set_fact:
+    current_release_path: "{{ deploy_to }}/current"
+    releases_path: "{{ deploy_to }}/releases"
+    release_path: "{{ deploy_to }}/releases/{{ timestamp.stdout }}"
+
+- name: Make directory {{ release_path }}
+  file: state=directory path={{ release_path }}/
+
+- name: Copy local to remote
+  copy: src={{ repository }} dest={{ release_path }}
+
+- name: "Tidy up to last {{ keep_releases }} releases"
+  command: bash -lc "cd {{ releases_path }} && rm -rf `ls -t | awk 'NR > {{ keep_releases }}'`"
+
+- name: "Make symbol link to current release"
+  file:
+    src: "{{ release_path }}"
+    dest: "{{ current_release_path }}"
+    state: link
