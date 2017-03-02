@@ -1,4 +1,9 @@
 - hosts: localhost
   remote_user: root
   roles:
-    - static-deploy
+    - {
+        role: static-deploy,
+        application: "static-deploy",
+        linked_sample_files: [ 'babel_settings.js', 'config/secrets.js' ],
+        sample_extname: 'example'
+      }

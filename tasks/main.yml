@@ -8,20 +8,38 @@
 
 - set_fact:
     current_release_path: "{{ deploy_to }}/current"
+    shared_path: "{{ deploy_to }}/shared"
     releases_path: "{{ deploy_to }}/releases"
     release_path: "{{ deploy_to }}/releases/{{ timestamp.stdout }}"
 
 - name: Make directory {{ release_path }}
-  file: state=directory path={{ release_path }}/
+  file: state=directory path={{ release_path }}
+
+- name: Make variable linked_file_dirs
+  shell: "dirname {{ item }}"
+  with_items: "{{ linked_sample_files }}"
+  register: linked_file_dirs
+
+- name: Make directory {{ shared_path }}
+  file: state=directory path={{ shared_path }}
+
+- name: Make directories for symbol files
+  shell: "mkdir -p {{ shared_path }}/{{ item.stdout }}"
+  with_items: "{{ linked_file_dirs.results }}"
 
 - name: Copy local to remote
-  copy: src={{ repository }} dest={{ release_path }}
+  copy: src={{ deploy_from }} dest={{ release_path }}
+
+- name: Copy sample files to shared if not exist
+  copy: force=no src="{{ release_path }}/{{ item }}.{{ sample_extname }}" dest="{{ shared_path }}/{{ item }}"
+  with_items: "{{ linked_sample_files }}"
+
+- name: Make symbol links to sample files
+  file: state=link force=yes src="{{ shared_path }}/{{ item }}" dest="{{ release_path }}/{{ item }}"
+  with_items: "{{ linked_sample_files }}"
 
 - name: "Tidy up to last {{ keep_releases }} releases"
   command: bash -lc "cd {{ releases_path }} && rm -rf `ls -t | awk 'NR > {{ keep_releases }}'`"
 
 - name: "Make symbol link to current release"
-  file:
-    src: "{{ release_path }}"
-    dest: "{{ current_release_path }}"
-    state: link
+  file: state=link force=yes src="{{ release_path }}" dest="{{ current_release_path }}"

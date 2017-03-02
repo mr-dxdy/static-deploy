@@ -1,5 +1,6 @@
 ---
-application: "static-deploy"
 deploy_to: "/srv/www/{{ application }}"
-repository: "dist/"
+deploy_from: "dist/"
 keep_releases: 5
+linked_sample_files: []
+sample_extname: 'sample'
