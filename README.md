@@ -3,7 +3,7 @@ Ansible static site deploy
 
 ## Example
 
-```
+``` yaml
 - hosts: localhost
   remote_user: user
   roles:
