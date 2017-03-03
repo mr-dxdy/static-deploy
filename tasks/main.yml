@@ -27,12 +27,12 @@
   shell: "mkdir -p {{ shared_path }}/{{ item.stdout }}"
   with_items: "{{ linked_file_dirs.results }}"
 
-- name: Copy local to remote
+- name: "Copy {{ deploy_from }}/ to {{ release_path }}"
   copy: src="{{ deploy_from }}/" dest={{ release_path }}
   when: deploy_via == "copy"
 
-- name: Rsync local to remote
-  synchronize: src={{ deploy_from }} dest={{ release_path }}
+- name: "Rsync {{ deploy_from }}/ to {{ release_path }}"
+  synchronize: src="{{ deploy_from }}/" dest={{ release_path }}
   when: deploy_via == "rsync"
 
 - name: Copy sample files to shared if not exist
