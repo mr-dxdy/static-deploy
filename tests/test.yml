@@ -3,7 +3,8 @@
   roles:
     - {
         role: static-deploy,
-        application: "static-deploy",
+        deploy_to: "/srv/www/static-deploy",
+        deploy_via: "copy",
         linked_sample_files: [ 'babel_settings.js', 'config/secrets.js' ],
         sample_extname: 'example'
       }

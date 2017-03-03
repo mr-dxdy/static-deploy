@@ -1,5 +1,5 @@
 ---
-- name: "Add deploy variables"
+- name: Add deploy variables
   include_vars: default.yml
 
 - name: 'Build timestamp'
@@ -28,7 +28,12 @@
   with_items: "{{ linked_file_dirs.results }}"
 
 - name: Copy local to remote
+  copy: src="{{ deploy_from }}/" dest={{ release_path }}
+  when: deploy_via == "copy"
+
+- name: Rsync local to remote
   synchronize: src={{ deploy_from }} dest={{ release_path }}
+  when: deploy_via == "rsync"
 
 - name: Copy sample files to shared if not exist
   copy: force=no src="{{ release_path }}/{{ item }}.{{ sample_extname }}" dest="{{ shared_path }}/{{ item }}"
@@ -38,8 +43,9 @@
   file: state=link force=yes src="{{ shared_path }}/{{ item }}" dest="{{ release_path }}/{{ item }}"
   with_items: "{{ linked_sample_files }}"
 
-- name: "Tidy up to last {{ keep_releases }} releases"
+- name: Tidy up to last {{ keep_releases }} releases
   command: bash -lc "cd {{ releases_path }} && rm -rf `ls -t | awk 'NR > {{ keep_releases }}'`"
+  when: keep_releases > 0
 
-- name: "Make symbol link to current release"
+- name: Make symbol link to current release
   file: state=link force=yes src="{{ release_path }}" dest="{{ current_release_path }}"

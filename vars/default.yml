@@ -1,6 +1,6 @@
 ---
-deploy_to: "/srv/www/{{ application }}"
-deploy_from: "dist/"
+deploy_from: "build"
+deploy_via: "rsync" # [copy, rsync]
 keep_releases: 5
 linked_sample_files: []
 sample_extname: 'sample'
