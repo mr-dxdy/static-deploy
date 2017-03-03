@@ -28,7 +28,7 @@
   with_items: "{{ linked_file_dirs.results }}"
 
 - name: Copy local to remote
-  copy: src={{ deploy_from }} dest={{ release_path }}
+  synchronize: src={{ deploy_from }} dest={{ release_path }}
 
 - name: Copy sample files to shared if not exist
   copy: force=no src="{{ release_path }}/{{ item }}.{{ sample_extname }}" dest="{{ shared_path }}/{{ item }}"
