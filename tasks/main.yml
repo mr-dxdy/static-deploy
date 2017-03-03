@@ -3,7 +3,7 @@
   include_vars: default.yml
 
 - name: 'Build timestamp'
-  shell: date +%Y%m%d%s
+  shell: date +%Y%m%d%H%M%S
   register: timestamp
 
 - set_fact:
