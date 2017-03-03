@@ -36,7 +36,7 @@
   when: deploy_via == "rsync"
 
 - name: Copy sample files to shared if not exist
-  copy: force=no src="{{ release_path }}/{{ item }}.{{ sample_extname }}" dest="{{ shared_path }}/{{ item }}"
+  command: cp -n "{{ release_path }}/{{ item }}.{{ sample_extname }}" "{{ shared_path }}/{{ item }}"
   with_items: "{{ linked_sample_files }}"
 
 - name: Make symbol links to sample files
